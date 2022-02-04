@@ -1,21 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styles from "./AddUsers.module.css";
 import Card from "../UI/Card";
 import Button from "../UI/Button";
 import ErrorModal from "../UI/ErrorModal";
 const AddUser = (props) => {
-    const [enteredUsername, setEnteredUsername] = useState('');
-    const [enteredAge, setEnteredAge] = useState('');
+    const nameInputRef = useRef();
+    const ageInputRef = useRef();
+
     const [error, setError] = useState();
 
-    const usernameChangeHandler = (event) => {
-        setEnteredUsername(event.target.value);
-    }
-    const ageChangeHandler = (event) => {
-        setEnteredAge(event.target.value);
-    }
     const addUserHandler = (event) => {
         event.preventDefault();
+        const enteredUsername = nameInputRef.current.value;
+        const enteredAge = ageInputRef.current.value;
         if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
             setError({
                 title: "Invalid input",
@@ -31,8 +28,8 @@ const AddUser = (props) => {
             return;
         }
         props.addUser(enteredUsername, enteredAge);
-        setEnteredUsername('');
-        setEnteredAge('');
+        nameInputRef.current.value = "";
+        ageInputRef.current.value = "";
     }
     const errorHandler = () => {
         setError(null);
@@ -43,9 +40,9 @@ const AddUser = (props) => {
             <Card className={styles.input}>
                 <form onSubmit={addUserHandler}>
                     <label htmlFor="username">Username</label>
-                    <input id="username" type="text" value={enteredUsername} onChange={usernameChangeHandler}></input>
+                    <input id="username" ref={nameInputRef} type="text"></input>
                     <label htmlFor="age">Age (Years)</label>
-                    <input id="age" type="number" value={enteredAge} onChange={ageChangeHandler}></input>
+                    <input id="age" type="number" ref={ageInputRef}></input>
                     <Button type="submit">Add User</Button>
                 </form>
             </Card></div>)
